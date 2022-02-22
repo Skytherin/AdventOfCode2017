@@ -6,6 +6,11 @@ namespace AdventOfCode2017.Utils
 {
     public static class EnumerableExtensions
     {
+        public static void EnqueueAll<T>(this Queue<T> self, IEnumerable<T> data)
+        {
+            foreach(var item in data) self.Enqueue(item);
+        }
+
         public static long Product(this IEnumerable<long> self)
         {
             return self.Aggregate((current, value) => current * value);
@@ -239,6 +244,11 @@ namespace AdventOfCode2017.Utils
 
         public static IEnumerable<(T Value, int Index)> WithIndices<T>(this IEnumerable<T> self) =>
             self.Select((it, index) => (it, index));
+
+        public static int FirstIndex<T>(this IEnumerable<T> self, Func<T, bool> predicate)
+        {
+            return self.WithIndices().First(it => predicate(it.Value)).Index;
+        }
 
         public static T Pop<T>(this List<T> self)
         {

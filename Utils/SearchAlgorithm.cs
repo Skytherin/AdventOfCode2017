@@ -46,15 +46,15 @@ namespace AdventOfCode2017.Utils
                 if (closed.TryGetValue(current.Node, out var other) && other <= current.Steps) continue;
                 closed[current.Node] = current.Steps;
 
-                foreach (var neighbor in neighbors(current.Node))
+                foreach (var (cost, node) in neighbors(current.Node))
                 {
-                    var totalCost = neighbor.Cost + current.Steps;
-                    if (needle(neighbor.Node))
+                    var totalCost = cost + current.Steps;
+                    if (needle(node))
                     {
-                        yield return new(neighbor.Node, totalCost);
+                        yield return new(node, totalCost);
                         continue;
                     }
-                    open.Enqueue(new(neighbor.Node, totalCost));
+                    open.Enqueue(new(node, totalCost));
                 }
             }
         }
