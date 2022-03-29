@@ -1,4 +1,7 @@
-﻿namespace AdventOfCode2017.Utils
+﻿using System;
+using System.Reflection.Metadata.Ecma335;
+
+namespace AdventOfCode2017.Utils
 {
     public static class MoreMath
     {
@@ -12,5 +15,10 @@
 
         public static int RoundUp(int numerator, int denominator) =>
             numerator / denominator + ((numerator % denominator) > 0 ? 1 : 0);
+
+        public static long BetterMod(long a, long b)
+        {
+            return ((a % b) + b) % b;
+        }
     }
 }

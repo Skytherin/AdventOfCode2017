@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode2017.Utils;
 using FluentAssertions;
-using FluentAssertions.Equivalency;
 using JetBrains.Annotations;
 
 namespace AdventOfCode2017.Days.Day17
@@ -18,7 +16,7 @@ namespace AdventOfCode2017.Days.Day17
             Do1(3, 2017, 2017).Should().Be(638);
             Do1(input, 2017, 2017).Should().Be(725);
 
-            Do1(input, 50_000_000, 0).Should().Be(0);
+            Do2(input, 50_000_000).Should().Be(27361412);
         }
 
         private LinkedList<int> Do0(int step, int iterations)
@@ -31,7 +29,6 @@ namespace AdventOfCode2017.Days.Day17
                 current = current!.Forward(step);
                 ll.AddAfter(current, value);
                 current = current.Roll();
-                if (value % 10_000 == 0) Console.WriteLine(value);
             }
 
             return ll;
@@ -40,52 +37,35 @@ namespace AdventOfCode2017.Days.Day17
         private int Do1(int step, int iterations, int afterValue)
         {
             var ll = Do0(step, iterations);
-            for (var node = ll.First; node != null; node = node.Next)
+            return ll.SkipWhile(it => it != afterValue).Skip(1).First();
+        }
+
+        private int Do2(int step, int iterations)
+        {
+            var currentLength = 1;
+            var zeroIndex = 0;
+            var current = 0;
+            var afterZero = 0;
+            foreach (var value in Enumerable.Range(1, iterations))
             {
-                if (node.Value == afterValue)
+                current = (current + step) % currentLength;
+
+                if (current == zeroIndex)
                 {
-                    return node.Roll().Value;
+                    afterZero = value;
                 }
-            }
 
-            throw new ApplicationException();
-        }
-    }
-
-    public class TernaryTree
-    {
-        private TernaryTree? Before = null;
-        private TernaryTree? After = null;
-        private readonly int Current;
-
-        public int Count { get; private set; } = 1;
-
-        public TernaryTree(int current)
-        {
-            Current = current;
-        }
-
-        public void AddAfter(int position, int value)
-        {
-            Count += 1;
-            if (Before is { } && position < Before.Count)
-            {
-                Before.AddAfter(position, value);
-                return;
-            }
-
-            position -= Before?.Count ?? 0;
-
-            if (position == 0)
-            {
-                After = new TernaryTree(value)
+                if (current < zeroIndex)
                 {
-                    After = After
-                };
-                return;
+                    zeroIndex += 1;
+                }
+
+                current += 1;
+                currentLength += 1;
             }
 
-            After!.AddAfter(position - 1, value);
+            return afterZero;
         }
     }
+    
 }
